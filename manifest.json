@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "ImageConvert",
+  "version": "5.0",
+  "description": "Convert pictures to different formats. Right-click any image to convert and download.",
+
+  "permissions": [
+    "contextMenus",
+    "downloads",
+    "storage"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ImageConvert"
+  }
+}
