@@ -1,0 +1,7 @@
+flask
+realesrgan
+basicsr
+opencv-python
+torch
+torchvision
+numpy
