@@ -1,9 +1,14 @@
 /**
  * background.js
- * Service worker for the app. Registers the right-click context menu,
- * initializes default storage values, and handles image conversion and download
- * when the menu item is clicked.
+ *
+ * Service worker for ImageConvert. Registers context menu items and handles
+ * image fetching, conversion, and download on menu click.
+ * Requires: upscale.js (loaded via importScripts).
+ *
+ * @author Ville Laaksoaho
  */
+
+importScripts('upscale.js');
 
 // Supported output formats with their MIME type and file extension
 const mimeMap = {
@@ -13,23 +18,32 @@ const mimeMap = {
 };
 
 chrome.runtime.onInstalled.addListener(() => {
-  // Add "ImageConvert: Save image" to the right-click menu on images
+  // Regular download
   chrome.contextMenus.create({
     id: 'imageConvert', title: 'ImageConvert: Save image', contexts: ['image']
   });
 
-  // Set default format and quality if not already saved
-  chrome.storage.sync.get(['format', 'quality'], (data) => {
-    if (!data.format) chrome.storage.sync.set({ format: 'png', quality: 92 });
+  // Upscaled download (scale and method set in popup)
+  chrome.contextMenus.create({
+    id: 'imageConvertUpscale', title: 'ImageConvert: Save image (upscaled)', contexts: ['image']
+  });
+
+  // Set default format, quality, scale and upscale method if not already saved
+  chrome.storage.sync.get(['format', 'quality', 'scale', 'upscaleMethod'], (data) => {
+    if (!data.format) {
+      chrome.storage.sync.set({ format: 'png', quality: 92, scale: 2, upscaleMethod: 'bicubic' });
+    }
   });
 });
 
 chrome.contextMenus.onClicked.addListener(async (info) => {
-  if (info.menuItemId !== 'imageConvert' || !info.srcUrl) return;
+  const isUpscale = info.menuItemId === 'imageConvertUpscale';
+  if (info.menuItemId !== 'imageConvert' && !isUpscale) return;
+  if (!info.srcUrl) return;
 
   // Load user preferences
-  const { format = 'png', quality = 92 } =
-    await chrome.storage.sync.get(['format', 'quality']);
+  const { format = 'png', quality = 92, scale = 2, upscaleMethod = 'bicubic' } =
+    await chrome.storage.sync.get(['format', 'quality', 'scale', 'upscaleMethod']);
   const fmt = mimeMap[format];
 
   // Derive a clean filename from the source URL
@@ -43,21 +57,17 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const blob = await response.blob();
 
-    // Draw onto an OffscreenCanvas for format conversion
     const bitmap = await createImageBitmap(blob);
-    const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-    const ctx = canvas.getContext('2d');
+    const factor = isUpscale ? scale : 1;
+    const dstW = bitmap.width * factor;
+    const dstH = bitmap.height * factor;
 
-    // Fill white background for JPEG (no transparency support)
-    if (fmt.mime === 'image/jpeg') {
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, bitmap.width, bitmap.height);
-    }
-    ctx.drawImage(bitmap, 0, 0);
-    bitmap.close();
+    // Upscale using the selected method, or draw at 1× for regular download
+    const outBlob = (isUpscale && upscaleMethod === 'lanczos')
+      ? await upscaleLanczos(bitmap, dstW, dstH, fmt.mime, quality / 100)
+      : await upscaleBicubic(bitmap, dstW, dstH, fmt.mime, quality / 100);
 
-    // Encode to the target format and trigger a download
-    const outBlob = await canvas.convertToBlob({ type: fmt.mime, quality: quality / 100 });
+    // Encode to data URL and trigger a download
     const reader = new FileReader();
     const dataUrl = await new Promise(r => {
       reader.onload = () => r(reader.result);
@@ -66,7 +76,7 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
 
     chrome.downloads.download({ url: dataUrl, filename, saveAs: true });
 
-  } catch(err) {
+  } catch (err) {
     console.error('ImageConvert:', err);
   }
 });

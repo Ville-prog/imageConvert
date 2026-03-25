@@ -1,8 +1,11 @@
 <!--
   popup.html
-  Extension popup for ImageConvert. Lets the user pick the output format
-  (PNG, JPEG, WebP) which is persisted via chrome.storage.sync.
-  Logic is handled in popup.js.
+
+  Extension popup for ImageConvert. Lets the user select the output format,
+  upscale method, and upscale scale factor.
+  Requires: popup.js
+
+  @author Ville Laaksoaho
 -->
 <!DOCTYPE html>
 <html>
@@ -24,7 +27,7 @@
 
   /* Section label above the dropdown */
   label { font-size: 0.65rem; text-transform: uppercase;
-    letter-spacing: 0.08em; color: #6b6b70;
+    letter-spacing: 0.08em; color: #c8c8e8;
   }
 
   /* Format dropdown */
@@ -53,6 +56,21 @@
   <option value="png">PNG</option>
   <option value="jpeg">JPEG</option>
   <option value="webp">WebP</option>
+</select>
+
+<!-- Upscaling method used by the upscaled download option -->
+<label>Upscale method</label>
+<select id="upscaleMethod">
+  <option value="bicubic">Bicubic</option>
+  <option value="lanczos">Lanczos</option>
+</select>
+
+<!-- Scale factor used by the upscaled download option -->
+<label>Upscale scale</label>
+<select id="scale">
+  <option value="2">2×</option>
+  <option value="3">3×</option>
+  <option value="4">4×</option>
 </select>
 
 <!-- Confirmation message, toggled by popup.js -->
