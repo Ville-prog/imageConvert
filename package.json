@@ -1,0 +1,11 @@
+{
+    "name": "imageconvert",
+    "version": "5.0.0",
+    "description": "Chrome extension for image conversion and upscaling",
+    "scripts": {
+        "test": "jest"
+    },
+    "devDependencies": {
+        "jest": "^29.0.0"
+    }
+}
