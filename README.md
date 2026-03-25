@@ -21,8 +21,8 @@ I run a YouTube channel and regularly source images from the web for thumbnails 
 ## UI
 
 <table><tr>
-<td><img src="docs/ui_popup_UI.png"/></td>
-<td><img src="docs/ui_rightclock_UI.png"/></td>
+<td><img src="docs/popup_UI.png"/></td>
+<td><img src="docs/rightclick_UI.png"/></td>
 </tr></table>
 
 ---
