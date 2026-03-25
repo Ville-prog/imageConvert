@@ -10,11 +10,20 @@ I run a YouTube channel and regularly source images from the web for thumbnails 
 
 ---
 
-## Preview
+## Preview (open images to see details better)
 
 | Original | Bicubic | Lanczos | AI (Real-ESRGAN) |
 |---|---|---|---|
 | ![Original](docs/preview_original.png) | ![Bicubic](docs/preview_bicubic.png) | ![Lanczos](docs/preview_lanczos.png) | ![AI](docs/preview_ai.png) |
+
+---
+
+## UI
+
+<table><tr>
+<td><img src="docs/ui_popup_UI.png"/></td>
+<td><img src="docs/ui_rightclock_UI.png"/></td>
+</tr></table>
 
 ---
 
