@@ -12,9 +12,24 @@ I run a YouTube channel and regularly source images from the web for thumbnails 
 
 ## Preview (open images to see details better)
 
-| Original | Bicubic | Lanczos | AI (Real-ESRGAN) |
-|---|---|---|---|
-| ![Original](docs/preview_original.png) | ![Bicubic](docs/preview_bicubic.png) | ![Lanczos](docs/preview_lanczos.png) | ![AI](docs/preview_ai.png) |
+<table>
+  <tr>
+    <td align="center"><strong>Original</strong></td>
+    <td align="center"><strong>Bicubic</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/preview_original.png" width="400"/></td>
+    <td><img src="docs/preview_bicubic.png" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Lanczos</strong></td>
+    <td align="center"><strong>AI (Real-ESRGAN)</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/preview_lanczos.png" width="400"/></td>
+    <td><img src="docs/preview_ai.png" width="400"/></td>
+  </tr>
+</table>
 
 ---
 
